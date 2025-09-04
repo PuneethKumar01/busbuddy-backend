@@ -5,7 +5,7 @@ import Bus from "../models/Bus.js";
 const router = express.Router();
 
 // Create a new route
-router.post("/", async (req, res) => {
+router.post("/add", async (req, res) => {
   try {
     const { routeNumber, startLocation, endLocation, stops } = req.body;
     const route = new Route({ routeNumber, startLocation, endLocation, stops });
@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
 });
 
 // Get all routes
-router.get("/", async (req, res) => {
+router.get("/all", async (req, res) => {
   try {
     const routes = await Route.find();
     res.json(routes);
