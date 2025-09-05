@@ -24,4 +24,17 @@ router.get("/all", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    const bus = await Bus.findById(req.params.id).populate("driver route");
+    if (!bus) {
+      return res.status(404).json({ error: "Bus not found" });
+    }
+    res.json(bus);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 export default router;

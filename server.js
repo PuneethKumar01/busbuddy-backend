@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";  // ✅ import cors
 
 import busRoutes from "./routes/busRoutes.js";
 import driverRoutes from "./routes/driverRoutes.js";
@@ -9,6 +10,14 @@ import locationRoutes from "./routes/locationRoutes.js";
 
 dotenv.config();
 const app = express();
+
+// ✅ Enable CORS for frontend
+app.use(cors({
+  origin: "http://localhost:3000", // frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
 app.use(express.json());
 
 // ✅ Connect to MongoDB
