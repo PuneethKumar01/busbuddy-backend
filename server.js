@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import cors from "cors";  // ✅ import cors
+import cors from "cors";
 
 import busRoutes from "./routes/busRoutes.js";
 import driverRoutes from "./routes/driverRoutes.js";
@@ -11,31 +11,25 @@ import locationRoutes from "./routes/locationRoutes.js";
 dotenv.config();
 const app = express();
 
-// ✅ Enable CORS for frontend
+// CORS - allow your frontend origin (adjust if deploying)
 app.use(cors({
-  origin: "http://localhost:3000", // frontend URL
+  origin: "http://localhost:3000",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
 app.use(express.json());
 
-// ✅ Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Error:", err));
 
-// ✅ API routes
 app.use("/api/bus", busRoutes);
 app.use("/api/driver", driverRoutes);
 app.use("/api/route", routeRoutes);
 app.use("/api/location", locationRoutes);
 
-// ✅ Root endpoint (optional)
-app.get("/", (req, res) => {
-  res.send("🚍 BusBuddy Backend is running!");
-});
+app.get("/", (req, res) => res.send("🚍 BusBuddy Backend is running!"));
 
-// ✅ Start server
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`🚍 Server running on port ${PORT}`));

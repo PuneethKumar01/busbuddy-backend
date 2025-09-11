@@ -8,6 +8,9 @@ const router = express.Router();
 router.post("/add", async (req, res) => {
   try {
     const { routeNumber, startLocation, endLocation, stops } = req.body;
+    if (!routeNumber || !startLocation || !endLocation) {
+      return res.status(400).json({ error: "routeNumber, startLocation and endLocation are required" });
+    }
     const route = new Route({ routeNumber, startLocation, endLocation, stops });
     await route.save();
     res.status(201).json(route);
@@ -26,44 +29,26 @@ router.get("/all", async (req, res) => {
   }
 });
 
-// 🔹 Search routes by single stop
+// Search routes by single stop
 router.get("/search", async (req, res) => {
   try {
     const { stop } = req.query;
     if (!stop) return res.status(400).json({ error: "Stop query is required" });
-
-    // Find routes that contain this stop
     const routes = await Route.find({ stops: { $regex: stop, $options: "i" } });
-
-    // Populate buses running on these routes
-    const buses = await Bus.find({
-      route: { $in: routes.map(r => r._id) }
-    }).populate("driver route");
-
+    const buses = await Bus.find({ route: { $in: routes.map(r => r._id) } }).populate("driver route");
     res.json({ routes, buses });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// 🔹 Search routes between two stops
+// Search routes between two stops
 router.get("/search-between", async (req, res) => {
   try {
     const { from, to } = req.query;
-    if (!from || !to) {
-      return res.status(400).json({ error: "Both 'from' and 'to' stops are required" });
-    }
-
-    // Find routes that contain both stops
-    const routes = await Route.find({
-      stops: { $all: [new RegExp(from, "i"), new RegExp(to, "i")] }
-    });
-
-    // Get buses running on these routes
-    const buses = await Bus.find({
-      route: { $in: routes.map(r => r._id) }
-    }).populate("driver route");
-
+    if (!from || !to) return res.status(400).json({ error: "Both 'from' and 'to' stops are required" });
+    const routes = await Route.find({ stops: { $all: [new RegExp(from, "i"), new RegExp(to, "i")] } });
+    const buses = await Bus.find({ route: { $in: routes.map(r => r._id) } }).populate("driver route");
     res.json({ routes, buses });
   } catch (err) {
     res.status(500).json({ error: err.message });

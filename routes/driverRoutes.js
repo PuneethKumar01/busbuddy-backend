@@ -11,7 +11,8 @@ router.post("/add", async (req, res) => {
     await driver.save();
     res.status(201).json(driver);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    const message = err.code === 11000 ? "Duplicate key error: unique field conflict" : err.message;
+    res.status(400).json({ error: message });
   }
 });
 
