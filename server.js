@@ -13,7 +13,7 @@ const app = express();
 
 // CORS - allow your frontend origin (adjust if deploying)
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000", "https://busbuddy-frontend.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
